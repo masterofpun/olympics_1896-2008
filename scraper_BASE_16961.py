@@ -17,6 +17,52 @@ c = conn.cursor()
 c.execute('drop table IF EXISTS data')
 c.execute('create table data (year,season,venue,sport,event,athelete,medal,country,result)')
 
+def words2date(bdate):
+    bdate = clean(rdate.sub(' ',bdate.lower()))
+    if len(bdate)<2:
+        return None
+    bdate = bdate.replace('febuary','february')
+    month = ['january','february','march','april','may','june','july','august','september','october','november','december']
+    bdate = bdate.split(' ')
+    date = datetime.date(int(bdate[2]),int(month.index(bdate[1])+1),int(numb.sub('',bdate[0])))
+    return date.isoformat()
+
+def text2int(textnum, numwords={}):
+    if not numwords:
+      units = [
+        "zero", "one", "two", "three", "four", "five", "six", "seven", "eight",
+        "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen",
+        "sixteen", "seventeen", "eighteen", "nineteen",
+      ]
+
+      tens = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"]
+
+      scales = ["hundred", "thousand", "million", "billion", "trillion"]
+
+      numwords["and"] = (1, 0)
+      for idx, word in enumerate(units):    numwords[word] = (1, idx)
+      for idx, word in enumerate(tens):     numwords[word] = (1, idx * 10)
+      for idx, word in enumerate(scales):   numwords[word] = (10 ** (idx * 3 or 2), 0)
+
+    current = result = 0
+    for word in textnum.split():
+        if word not in numwords:
+            return 0
+
+        scale, increment = numwords[word]
+        current = current * scale + increment
+        if scale > 100:
+            result += current
+            current = 0
+    return result + current
+
+def num(s):
+    s = numb.sub(' ',s)
+    s = clean(s)
+    if s is None:
+        return 0
+    return int(s)
+
 def clean(s):
     return rex.sub(' ',s).strip()
 
