@@ -48,12 +48,12 @@ for sportlink in sitedata.find_all():
         for row in eventData.find_all():
             if 'class="cl' not in str(row):
                 continue
-            rowt = str(row.text).split('\n')[1:] #Don't clean()
-            year = int(clean(rowt[0]))
-            athelete = rowt[2].strip()
-            medal = clean(rowt[3])
-            country = clean(rowt[4])
-            result = clean(rowt[5])
+            rowt = str(row.text).split('\n')[1:]
+            year = int(rowt[0].strip())
+            athelete = rowt[2]
+            medal = rowt[3]
+            country = rowt[4]
+            result = rowt[5]
             season = "SUMMER"
             venue = ""
             if str(year) in summerYears:
@@ -63,8 +63,8 @@ for sportlink in sitedata.find_all():
                 venue = winterYears[str(year)]
         
             data = [year,season,venue,sport,event,athelete,medal,country,result]
-            print(data)
             # year,season,venue,sport,event,athelete,medal,country,result
             c.execute('insert into data values (?,?,?,?,?,?,?,?,?)',data)
+            
 conn.commit()
 c.close()
